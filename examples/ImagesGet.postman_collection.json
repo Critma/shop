@@ -1,0 +1,144 @@
+{
+  "info": {
+    "_postman_id": "e2bb79de-f8ff-4d88-b3f2-32929d9c4dcd",
+    "name": "BE2_APIFromSpec",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "42944399"
+  },
+  "item": [
+    {
+      "name": "images",
+      "item": [
+        {
+          "name": "Image",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response;",
+                  "const base64Image = btoa(",
+                  "    new Uint8Array(response.stream).reduce((data, byte) => data + String.fromCharCode(byte), '')",
+                  ");",
+                  "const contentType = response.headers.get('Content-Type') || 'image/jpeg';",
+                  "const template = `",
+                  "<html>",
+                  "  <body style=\"margin:0;background:#1e1e1e;display:flex;justify-content:center;align-items:center;min-height:100vh;\">",
+                  "    <img src=\"data:${contentType};base64,${base64Image}\" style=\"max-width:100%;max-height:100vh;object-fit:contain;\" />",
+                  "  </body>",
+                  "</html>",
+                  "`;",
+                  "pm.visualizer.set(template);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/octet-stream, application/problem+json"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/images/019d5e3c-fdce-75ba-838f-e0d1f2e6c41e",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "images",
+                "019d5e3c-fdce-75ba-838f-e0d1f2e6c41e"
+              ]
+            },
+            "description": "Generated from cURL: curl --request GET  \n\\--url [http://localhost:8080/api/v1/images/019d5deb-4809-753c-b3d8-e0b79e1936c7](http://localhost:8080/api/v1/images/019d5deb-4809-753c-b3d8-e0b79e1936c7)  \n\\--header 'Accept: application/octet-stream, application/problem+json'"
+          },
+          "response": []
+        },
+        {
+          "name": "Image by productID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const base64Image = btoa(",
+                  "    pm.response.stream.reduce((data, byte) => data + String.fromCharCode(byte), '')",
+                  ");",
+                  "",
+                  "const template = `",
+                  "<html>",
+                  "  <body style=\"margin:0;display:flex;justify-content:center;align-items:center;background:#1a1a1a;\">",
+                  "    <img src=\"data:image/jpeg;base64,{{imageData}}\" style=\"max-width:100%;max-height:100vh;\" />",
+                  "  </body>",
+                  "</html>",
+                  "`;",
+                  "",
+                  "pm.visualizer.set(template, { imageData: base64Image });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/octet-stream, application/problem+json"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/products/019d5e38-fbc4-7340-8cfa-0fb364f1d3be/image",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "products",
+                "019d5e38-fbc4-7340-8cfa-0fb364f1d3be",
+                "image"
+              ]
+            },
+            "description": "Generated from cURL: curl --request GET  \n\\--url [http://localhost:8080/api/v1/images/019d5deb-4809-753c-b3d8-e0b79e1936c7](http://localhost:8080/api/v1/images/019d5deb-4809-753c-b3d8-e0b79e1936c7)  \n\\--header 'Accept: application/octet-stream, application/problem+json'"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "url",
+      "value": "http://localhost:8080/api/v1"
+    }
+  ]
+}
