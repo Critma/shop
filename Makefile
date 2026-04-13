@@ -11,6 +11,9 @@ compose:
 compose-postgres:
 	docker-compose -p "shop-api" -f $(COMPOSE_PATH) --env-file $(ENV_PATH) up -d postgres
 
+compose-clear:
+	docker compose -f $(COMPOSE_PATH) --env-file $(ENV_PATH) down -v
+
 # run local
 run:
 	mkdir -p $(BUILD_PATH)
