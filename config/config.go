@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/rs/zerolog/log"
@@ -19,6 +20,8 @@ type Config struct {
 }
 
 func InitConfig() (config Config, err error) {
+	setDefaults()
+
 	viper.AddConfigPath("./config")
 	viper.AddConfigPath("./")
 	viper.AddConfigPath("../../config")
@@ -29,8 +32,12 @@ func InitConfig() (config Config, err error) {
 
 	err = viper.ReadInConfig()
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to read config")
-		return
+		if errors.As(err, &viper.ConfigFileNotFoundError{}) {
+			log.Info().Msg("Config file not found, using defaults")
+		} else {
+			log.Error().Err(err).Msg("Failed to read config")
+			return
+		}
 	}
 
 	err = viper.Unmarshal(&config)
@@ -40,4 +47,17 @@ func InitConfig() (config Config, err error) {
 	}
 	log.Info().Any("config", config).Msg("Config loaded")
 	return
+}
+
+func setDefaults() {
+	viper.SetDefault("POSTGRES_USER", "admin")
+	viper.SetDefault("POSTGRES_PASSWORD", "admin")
+	viper.SetDefault("POSTGRES_DB", "shopapi")
+	viper.SetDefault("POSTGRES_HOST", "localhost")
+	viper.SetDefault("POSTGRES_PORT", "5432")
+
+	viper.SetDefault("PGADMIN_DEFAULT_EMAIL", "user@example.com")
+	viper.SetDefault("PGADMIN_DEFAULT_PASSWORD", "securepassword")
+
+	viper.SetDefault("SERVICE_HOST", "localhost")
 }

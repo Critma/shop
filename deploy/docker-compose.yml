@@ -3,7 +3,7 @@ services:
     image: nginx:1.29.7-alpine
     container_name: nginx
     environment:
-      SERVICE_HOST: ${SERVICE_HOST}
+      SERVICE_HOST: ${SERVICE_HOST-localhost}
     ports:
       - "80:80"
       - "443:443"
@@ -25,6 +25,7 @@ services:
     environment:
       POSTGRES_HOST: postgres
       SERVICE_HOST: api
+      # TODO: optional .env
     volumes:
       - ../config/.env:/app/.env
     depends_on:
@@ -63,11 +64,11 @@ services:
     image: postgres:18.3-alpine3.23
     container_name: pg_shopapi
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      PGUSER: ${POSTGRES_USER}
-      PGDATABASE: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-admin}
+      POSTGRES_DB: ${POSTGRES_DB-shopapi}
+      PGUSER: ${POSTGRES_USER-admin}
+      PGDATABASE: ${POSTGRES_DB-shopapi}
     volumes:
       - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
       - pg_data:/var/lib/postgresql
@@ -83,8 +84,8 @@ services:
     image: dpage/pgadmin4:9.14.0
     container_name: pgadmin_shopapi
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL-user@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD-securepassword}
     volumes:
       - "pgadmin_data:/var/lib/pgadmin"
     depends_on:

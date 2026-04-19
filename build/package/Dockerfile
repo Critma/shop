@@ -9,6 +9,5 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ./shopapi.exe ./c
 #Run
 FROM alpine:3.23
 WORKDIR /app
-COPY --from=builder /app/config/.env .
 COPY --from=builder /app/shopapi.exe .
 CMD ["./shopapi.exe"]
