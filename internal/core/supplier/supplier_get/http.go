@@ -9,8 +9,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, store Store) {
-	uc := newUseCase(store)
+func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 
 	huma.Register(api, huma.Operation{
 		OperationID:   "get-supplier_v1",

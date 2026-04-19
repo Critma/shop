@@ -43,7 +43,7 @@ services:
       - ../config/.env:/app/.env
     depends_on:
       postgres:
-        condition: service_healthy    
+        condition: service_healthy
 
   api3:
     build:
@@ -61,7 +61,7 @@ services:
 
   postgres:
     image: postgres:18.3-alpine3.23
-    container_name: postgres_container
+    container_name: pg_shopapi
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -81,7 +81,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:9.14.0
-    container_name: pgadmin_container
+    container_name: pgadmin_shopapi
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}

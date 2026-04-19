@@ -15,7 +15,7 @@ type useCase struct {
 	store Store
 }
 
-func newUseCase(store Store) *useCase {
+func NewUsecase(store Store) *useCase {
 	return &useCase{
 		store: store,
 	}
