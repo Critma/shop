@@ -25,7 +25,7 @@ services:
     environment:
       POSTGRES_HOST: postgres
       SERVICE_HOST: api
-      # TODO: optional .env
+      # TODO: fix optional .env
     volumes:
       - ../config/.env:/app/.env
     depends_on:
