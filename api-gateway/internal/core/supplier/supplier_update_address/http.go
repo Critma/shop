@@ -17,6 +17,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Update the address of a supplier",
 		Tags:          []string{"Suppliers"},
 		DefaultStatus: http.StatusOK,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputUpdateSupplierAddress) (*OutputUpdateSupplierAddress, error) {
 		output, err := uc.UpdateSupplierAddress(ctx, i)
 		if err != nil {

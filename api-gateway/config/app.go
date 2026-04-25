@@ -1,8 +1,12 @@
 package config
 
-import "shopapi/internal/adapter/postgres"
+import (
+	"shopapi/internal/adapter/grpc_client"
+	"shopapi/internal/adapter/postgres"
+)
 
 type App struct {
-	Config Config
-	Store  *postgres.Postgres
+	Config     Config
+	Store      *postgres.Postgres
+	GrpcClient *grpc_client.Client
 }

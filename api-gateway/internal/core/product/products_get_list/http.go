@@ -17,6 +17,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Get all products with optional pagination (limit and offset)",
 		Tags:          []string{"Products"},
 		DefaultStatus: http.StatusOK,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputGetAllProducts) (*OutputGetAllProducts, error) {
 		output, err := uc.GetAllProducts(ctx, i)
 		if err != nil {

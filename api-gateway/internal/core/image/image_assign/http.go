@@ -23,6 +23,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Tags:          []string{"Images"},
 		DefaultStatus: http.StatusCreated,
 		MaxBodyBytes:  maxBody10MBytes,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputImageAssign) (*OutputImageAssign, error) {
 		output, err := uc.ImageAssign(ctx, i)
 		if err != nil {

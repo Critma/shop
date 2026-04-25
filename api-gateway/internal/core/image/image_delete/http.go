@@ -19,6 +19,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Delete an image by ID",
 		Tags:          []string{"Images"},
 		DefaultStatus: http.StatusOK,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputImageDelete) (*struct{}, error) {
 		err := uc.DeleteImage(ctx, i)
 		if err != nil {

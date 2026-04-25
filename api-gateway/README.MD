@@ -2,7 +2,7 @@
 
 ## Docker run
 
-1. rename **config/.env.example** to **config/.env**
+1. (optionally) rename **config/.env.example** to **config/.env**
 2. run command (make):
 ```shell
 make compose

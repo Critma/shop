@@ -19,6 +19,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Update an image by ID with new image bytes data",
 		Tags:          []string{"Images"},
 		DefaultStatus: http.StatusOK,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputImageUpdate) (*OutputImageUpdate, error) {
 		output, err := uc.UpdateImage(ctx, i)
 		if err != nil {

@@ -16,6 +16,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Create a client with name, username, birthday and gender",
 		Tags:          []string{"Clients"},
 		DefaultStatus: http.StatusCreated,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputClientCreate) (*OutputClientCreate, error) {
 		output, err := uc.ClientCreate(ctx, i)
 		if err != nil {

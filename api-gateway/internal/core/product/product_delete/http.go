@@ -19,6 +19,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Delete a product by ID",
 		Tags:          []string{"Products"},
 		DefaultStatus: http.StatusOK,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputProductDelete) (*struct{}, error) {
 		err := uc.ProductDelete(ctx, i)
 		if err != nil {

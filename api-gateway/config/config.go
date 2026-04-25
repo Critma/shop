@@ -17,6 +17,9 @@ type Config struct {
 	PGDBName   string `mapstructure:"POSTGRES_DB" `
 	PGHost     string `mapstructure:"POSTGRES_HOST"    `
 	PGPort     string `mapstructure:"POSTGRES_PORT"    `
+
+	AuthHost string `mapstructure:"AUTH_HOST"`
+	AuthPort string `mapstructure:"AUTH_PORT"`
 }
 
 func InitConfig() (config Config, err error) {
@@ -60,4 +63,7 @@ func setDefaults() {
 	viper.SetDefault("PGADMIN_DEFAULT_PASSWORD", "securepassword")
 
 	viper.SetDefault("SERVICE_HOST", "localhost")
+
+	viper.SetDefault("AUTH_HOST", "host.docker.internal")
+	viper.SetDefault("AUTH_PORT", "9090")
 }

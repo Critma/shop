@@ -19,6 +19,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Get a supplier by ID",
 		Tags:          []string{"Suppliers"},
 		DefaultStatus: http.StatusOK,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputSupplierGet) (*OutputSupplierGet, error) {
 		output, err := uc.GetSupplier(ctx, i)
 		if err != nil {

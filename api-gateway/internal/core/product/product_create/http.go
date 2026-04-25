@@ -19,6 +19,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Create a product with optional imageID, required supplierID",
 		Tags:          []string{"Products"},
 		DefaultStatus: http.StatusCreated,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputProductCreate) (*OutputProductCreate, error) {
 		output, err := uc.ProductCreate(ctx, i)
 		if err != nil {

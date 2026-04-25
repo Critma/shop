@@ -20,6 +20,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Get a product by ID",
 		Tags:          []string{"Products"},
 		DefaultStatus: http.StatusOK,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputProductGet) (*OutputProductGet, error) {
 		output, err := uc.GetProduct(ctx, i)
 		if err != nil {

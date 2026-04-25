@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"shopapi/config"
+	"shopapi/internal/adapter/grpc_client"
 	"shopapi/internal/adapter/postgres"
 	"shopapi/internal/api"
+	"shopapi/pkg/zlog"
 	"time"
 
 	"github.com/danielgtaylor/huma/v2/humacli"
@@ -24,17 +25,21 @@ func main() {
 		return
 	}
 
-	// postgres, err := postgres.New(context.Background(), cfg.Postgres)
 	postgres, err := postgres.New(context.Background(), postgres.NewConfig(cfg.PGUser, cfg.PGPassword, cfg.PGDBName, cfg.PGHost, cfg.PGPort))
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to connect to database")
-		os.Exit(1)
+		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
 	defer postgres.Close()
 
+	grpcClient, err := grpc_client.New(cfg.AuthHost+":"+cfg.AuthPort, zlog.InterceptorLogger())
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to connect to grpc server")
+	}
+
 	app := config.App{
-		Config: cfg,
-		Store:  postgres,
+		Config:     cfg,
+		Store:      postgres,
+		GrpcClient: grpcClient,
 	}
 
 	// server

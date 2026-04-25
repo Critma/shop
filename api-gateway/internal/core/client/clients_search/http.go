@@ -16,6 +16,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Description:   "Search a clients by name and surname",
 		Tags:          []string{"Clients"},
 		DefaultStatus: http.StatusOK,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputClientsSearch) (*OutputClientsSearch, error) {
 		output, err := uc.ClientsSearch(ctx, i)
 		if err != nil {

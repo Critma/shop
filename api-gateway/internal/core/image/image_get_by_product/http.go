@@ -25,6 +25,9 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 				},
 			},
 		},
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
 	}, func(ctx context.Context, i *InputImageGetByProduct) (*OutputImageGetByProduct, error) {
 		output, err := uc.GetImageByProduct(ctx, i)
 		if err != nil {
