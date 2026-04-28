@@ -11,17 +11,21 @@ type Store interface {
 	ClientCreate(ctx context.Context, name, surname string, birthday time.Time, gender domain.Gender) (*domain.Client, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
-		store: store,
-	}
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{store: store}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) ClientCreate(ctx context.Context, input *InputClientCreate) (*OutputClientCreate, error) {
+func (u *Usecase) ClientCreate(ctx context.Context, input *InputClientCreate) (*OutputClientCreate, error) {
 	createdClient, err := u.store.ClientCreate(ctx, input.Body.Name, input.Body.Surname, input.Body.Birthday, input.Body.Gender)
 	if err != nil {
 		return nil, errors.New("Internal server error")

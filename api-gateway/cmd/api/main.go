@@ -8,6 +8,7 @@ import (
 	"shopapi/internal/adapter/grpc_client"
 	"shopapi/internal/adapter/postgres"
 	"shopapi/internal/api"
+	"shopapi/internal/core"
 	"shopapi/pkg/zlog"
 	"time"
 
@@ -41,6 +42,9 @@ func main() {
 		Store:      postgres,
 		GrpcClient: grpcClient,
 	}
+
+	// usecases
+	core.CreateUsecases(app)
 
 	// server
 	cli := humacli.New(func(hooks humacli.Hooks, o *Options) {

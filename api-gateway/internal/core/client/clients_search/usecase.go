@@ -10,17 +10,23 @@ type Store interface {
 	ClientsSearch(ctx context.Context, name, surname string) ([]*domain.Client, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) ClientsSearch(ctx context.Context, input *InputClientsSearch) (*OutputClientsSearch, error) {
+func (u *Usecase) ClientsSearch(ctx context.Context, input *InputClientsSearch) (*OutputClientsSearch, error) {
 	clients, err := u.store.ClientsSearch(ctx, input.Body.Name, input.Body.Surname)
 	if err != nil {
 		return nil, render.ErrLeadInternalServer

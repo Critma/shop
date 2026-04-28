@@ -11,17 +11,23 @@ type Store interface {
 	SupplierGetList(ctx context.Context, params postgres.ListParams) ([]*domain.Supplier, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) GetAllSuppliers(ctx context.Context, input *InputGetAllSuppliers) (*OutputGetAllSuppliers, error) {
+func (u *Usecase) GetAllSuppliers(ctx context.Context, input *InputGetAllSuppliers) (*OutputGetAllSuppliers, error) {
 	var params postgres.ListParams
 	// skip zero values
 	if input.Limit != 0 {

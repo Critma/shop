@@ -10,7 +10,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
 	huma.Register(api, huma.Operation{
 		OperationID:   "delete-image_v1",
 		Method:        method,
@@ -23,7 +23,7 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 			{"bearer": {}},
 		},
 	}, func(ctx context.Context, i *InputImageDelete) (*struct{}, error) {
-		err := uc.DeleteImage(ctx, i)
+		err := usecase.DeleteImage(ctx, i)
 		if err != nil {
 			if errors.Is(err, domain.ErrNotFound) {
 				return nil, huma.Error404NotFound("image not found")

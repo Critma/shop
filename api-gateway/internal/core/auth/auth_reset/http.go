@@ -9,7 +9,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
 	huma.Register(api, huma.Operation{
 		OperationID:   "auth-reset_v1",
 		Method:        method,
@@ -19,7 +19,7 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Tags:          []string{"Auth"},
 		DefaultStatus: http.StatusAccepted,
 	}, func(ctx context.Context, i *InputReset) (*OutputReset, error) {
-		output, err := uc.Reset(ctx, i)
+		output, err := usecase.Reset(ctx, i)
 		if err != nil {
 			if errors.Is(err, domain.ErrInvalidArgs) {
 				return nil, huma.Error400BadRequest("invalid arguments")

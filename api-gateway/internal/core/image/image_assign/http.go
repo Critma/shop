@@ -12,7 +12,7 @@ import (
 
 const maxBody10MBytes = 1024 * 1024 * 10 // 10MB
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
 
 	huma.Register(api, huma.Operation{
 		OperationID:   "assign-image_v1",
@@ -27,7 +27,7 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 			{"bearer": {}},
 		},
 	}, func(ctx context.Context, i *InputImageAssign) (*OutputImageAssign, error) {
-		output, err := uc.ImageAssign(ctx, i)
+		output, err := usecase.ImageAssign(ctx, i)
 		if err != nil {
 			if errors.Is(err, domain.ErrNotFound) {
 				return nil, huma.Error404NotFound("product or image not found", err)

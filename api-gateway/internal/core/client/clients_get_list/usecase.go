@@ -11,17 +11,23 @@ type Store interface {
 	ClientGetList(ctx context.Context, params postgres.ListParams) ([]*domain.Client, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) GetAllClients(ctx context.Context, input *InputGetAllClients) (*OutputGetAllClients, error) {
+func (u *Usecase) GetAllClients(ctx context.Context, input *InputGetAllClients) (*OutputGetAllClients, error) {
 	var params postgres.ListParams
 	// skip zero values
 	if input.Limit != 0 {

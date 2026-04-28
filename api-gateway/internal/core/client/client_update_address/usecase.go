@@ -12,17 +12,23 @@ type Store interface {
 	ClientChangeAddress(ctx context.Context, clientID uuid.UUID, address *domain.Address) error
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) UpdateClientAddress(ctx context.Context, input *InputUpdateClientAddress) (*OutputUpdateClientAddress, error) {
+func (u *Usecase) UpdateClientAddress(ctx context.Context, input *InputUpdateClientAddress) (*OutputUpdateClientAddress, error) {
 	err := u.store.ClientChangeAddress(ctx, input.ID, toAddress(input))
 	if err != nil {
 		return nil, render.ErrLeadInternalServer

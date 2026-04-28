@@ -7,7 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
 
 	huma.Register(api, huma.Operation{
 		OperationID:   "get-list-suppliers_v1",
@@ -21,7 +21,7 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 			{"bearer": {}},
 		},
 	}, func(ctx context.Context, i *InputGetAllSuppliers) (*OutputGetAllSuppliers, error) {
-		output, err := uc.GetAllSuppliers(ctx, i)
+		output, err := usecase.GetAllSuppliers(ctx, i)
 		if err != nil {
 			return nil, err
 		}

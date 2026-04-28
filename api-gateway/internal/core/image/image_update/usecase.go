@@ -11,17 +11,23 @@ type Store interface {
 	ImageUpdate(ctx context.Context, imageID uuid.UUID, imageData []byte) error
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) UpdateImage(ctx context.Context, input *InputImageUpdate) (*OutputImageUpdate, error) {
+func (u *Usecase) UpdateImage(ctx context.Context, input *InputImageUpdate) (*OutputImageUpdate, error) {
 	formData := input.RawBody.Data()
 	imageBytes, err := io.ReadAll(formData.Image)
 	if err != nil {

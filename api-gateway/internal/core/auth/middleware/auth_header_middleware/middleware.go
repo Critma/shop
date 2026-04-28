@@ -7,7 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func AuthMiddleware(api huma.API, uc Usecase) func(ctx huma.Context, next func(huma.Context)) {
+func AuthMiddleware(api huma.API) func(ctx huma.Context, next func(huma.Context)) {
 	return func(ctx huma.Context, next func(huma.Context)) {
 		authHeader := ctx.Header("Authorization")
 		split := strings.Split(authHeader, " ")
@@ -20,7 +20,7 @@ func AuthMiddleware(api huma.API, uc Usecase) func(ctx huma.Context, next func(h
 			huma.WriteErr(api, ctx, http.StatusUnauthorized, "token is empty")
 			return
 		}
-		msg, err := uc.TokenValidate(ctx.Context(), token)
+		msg, err := usecase.TokenValidate(ctx.Context(), token)
 		if err != nil {
 			huma.WriteErr(api, ctx, http.StatusUnauthorized, msg)
 			return

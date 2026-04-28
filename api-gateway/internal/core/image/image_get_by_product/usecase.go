@@ -11,17 +11,23 @@ type Store interface {
 	ImageGetByProduct(ctx context.Context, productID uuid.UUID) (*domain.Image, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) GetImageByProduct(ctx context.Context, input *InputImageGetByProduct) (*OutputImageGetByProduct, error) {
+func (u *Usecase) GetImageByProduct(ctx context.Context, input *InputImageGetByProduct) (*OutputImageGetByProduct, error) {
 	image, err := u.store.ImageGetByProduct(ctx, input.ProductID)
 	if err != nil {
 		return nil, err

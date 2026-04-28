@@ -7,7 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
 
 	huma.Register(api, huma.Operation{
 		OperationID:   "decrease-stock-product_v1",
@@ -18,7 +18,7 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 		Tags:          []string{"Products"},
 		DefaultStatus: http.StatusOK,
 	}, func(ctx context.Context, i *InputProductStockDecrease) (*OutputProductStockDecrease, error) {
-		output, err := uc.ProductCreate(ctx, i)
+		output, err := usecase.ProductCreate(ctx, i)
 		if err != nil {
 			return nil, err
 		}

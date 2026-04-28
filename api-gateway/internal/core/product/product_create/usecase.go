@@ -9,17 +9,23 @@ type Store interface {
 	ProductCreate(ctx context.Context, product *domain.Product) (*domain.Product, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) ProductCreate(ctx context.Context, input *InputProductCreate) (*OutputProductCreate, error) {
+func (u *Usecase) ProductCreate(ctx context.Context, input *InputProductCreate) (*OutputProductCreate, error) {
 	createdProduct, err := u.store.ProductCreate(ctx, toProduct(input))
 	if err != nil {
 		return nil, err

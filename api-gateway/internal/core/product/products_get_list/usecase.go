@@ -10,17 +10,21 @@ type Store interface {
 	ProductGetList(ctx context.Context, params postgres.ListParams) ([]*domain.Product, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+	usecase = uc
+	return uc
 }
 
-func (u *useCase) GetAllProducts(ctx context.Context, input *InputGetAllProducts) (*OutputGetAllProducts, error) {
+func (u *Usecase) GetAllProducts(ctx context.Context, input *InputGetAllProducts) (*OutputGetAllProducts, error) {
 	var params postgres.ListParams
 	// skip zero values
 	if input.Limit != 0 {

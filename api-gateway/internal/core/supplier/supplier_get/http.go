@@ -9,7 +9,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
 
 	huma.Register(api, huma.Operation{
 		OperationID:   "get-supplier_v1",
@@ -23,7 +23,7 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 			{"bearer": {}},
 		},
 	}, func(ctx context.Context, i *InputSupplierGet) (*OutputSupplierGet, error) {
-		output, err := uc.GetSupplier(ctx, i)
+		output, err := usecase.GetSupplier(ctx, i)
 		if err != nil {
 			if errors.Is(err, domain.ErrNotFound) {
 				return nil, huma.Error404NotFound("supplier not found")

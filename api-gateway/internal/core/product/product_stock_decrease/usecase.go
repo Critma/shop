@@ -11,17 +11,23 @@ type Store interface {
 	ProductDecreaseStock(ctx context.Context, productID uuid.UUID, amount int) error
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUseCase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) ProductCreate(ctx context.Context, input *InputProductStockDecrease) (*OutputProductStockDecrease, error) {
+func (u *Usecase) ProductCreate(ctx context.Context, input *InputProductStockDecrease) (*OutputProductStockDecrease, error) {
 	err := u.store.ProductDecreaseStock(ctx, input.Body.ProductID, input.Body.Quantity)
 	if err != nil {
 		return nil, render.ErrLeadInternalServer

@@ -10,17 +10,23 @@ type Store interface {
 	ProductDelete(ctx context.Context, productID uuid.UUID) error
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) ProductDelete(ctx context.Context, input *InputProductDelete) error {
+func (u *Usecase) ProductDelete(ctx context.Context, input *InputProductDelete) error {
 	err := u.store.ProductDelete(ctx, input.ProductID)
 	if err != nil {
 		return err

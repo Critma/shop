@@ -7,18 +7,21 @@ import (
 	"shopapi/internal/domain"
 )
 
-type useCase struct {
+type Usecase struct {
 	grpcClient *grpc_client.Client
 }
 
-func NewUsecase(grpcClient *grpc_client.Client) *useCase {
+var usecase *Usecase
 
-	return &useCase{
-		grpcClient: grpcClient,
-	}
+func NewUsecase(grpcClient *grpc_client.Client) *Usecase {
+	uc := &Usecase{grpcClient: grpcClient}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) Login(ctx context.Context, inp *InputLogin) (*OutputLogin, error) {
+func (u *Usecase) Login(ctx context.Context, inp *InputLogin) (*OutputLogin, error) {
 	if inp.Body.Email == "" || inp.Body.Password == "" {
 		return nil, domain.ErrInvalidArgs
 	}

@@ -11,17 +11,23 @@ type Store interface {
 	ProductGet(ctx context.Context, productID uuid.UUID) (*domain.Product, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) GetProduct(ctx context.Context, input *InputProductGet) (*OutputProductGet, error) {
+func (u *Usecase) GetProduct(ctx context.Context, input *InputProductGet) (*OutputProductGet, error) {
 	product, err := u.store.ProductGet(ctx, input.ProductID)
 	if err != nil {
 		return nil, err

@@ -10,7 +10,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
 
 	huma.Register(api, huma.Operation{
 		OperationID:   "delete-supplier_v1",
@@ -24,7 +24,7 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 			{"bearer": {}},
 		},
 	}, func(ctx context.Context, i *InputSupplierDelete) (*struct{}, error) {
-		err := uc.SupplierDelete(ctx, i)
+		err := usecase.SupplierDelete(ctx, i)
 		if err != nil {
 			if errors.Is(err, domain.ErrNotFound) {
 				return nil, huma.Error404NotFound("supplier not found")

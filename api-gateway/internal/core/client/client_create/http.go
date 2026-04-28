@@ -7,7 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
 	huma.Register(api, huma.Operation{
 		OperationID:   "create-client_v1",
 		Method:        method,
@@ -20,7 +20,7 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 			{"bearer": {}},
 		},
 	}, func(ctx context.Context, i *InputClientCreate) (*OutputClientCreate, error) {
-		output, err := uc.ClientCreate(ctx, i)
+		output, err := usecase.ClientCreate(ctx, i)
 		if err != nil {
 			return nil, err
 		}

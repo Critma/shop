@@ -8,7 +8,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 )
 
-func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
 	huma.Register(api, huma.Operation{
 		OperationID: "get-image_v1",
 		Method:      method,
@@ -28,7 +28,7 @@ func RegisterHTTPv1Handler(api huma.API, path, method string, uc *useCase) {
 			{"bearer": {}},
 		},
 	}, func(ctx context.Context, i *InputImageGet) (*OutputImageGet, error) {
-		output, err := uc.GetImage(ctx, i)
+		output, err := usecase.GetImage(ctx, i)
 		if err != nil {
 			if err == domain.ErrNotFound {
 				return nil, huma.Error404NotFound("image not found")

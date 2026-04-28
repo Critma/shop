@@ -12,17 +12,23 @@ type Store interface {
 	ImageAssignToProduct(ctx context.Context, productID uuid.UUID, image domain.ImageData) (uuid.UUID, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) ImageAssign(ctx context.Context, input *InputImageAssign) (*OutputImageAssign, error) {
+func (u *Usecase) ImageAssign(ctx context.Context, input *InputImageAssign) (*OutputImageAssign, error) {
 	formData := input.RawBody.Data()
 	data, err := io.ReadAll(formData.Image)
 	if err != nil {

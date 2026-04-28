@@ -9,17 +9,23 @@ type Store interface {
 	SupplierCreate(ctx context.Context, supplier *domain.Supplier) (*domain.Supplier, error)
 }
 
-type useCase struct {
+type Usecase struct {
 	store Store
 }
 
-func NewUsecase(store Store) *useCase {
-	return &useCase{
+var usecase *Usecase
+
+func NewUsecase(store Store) *Usecase {
+	uc := &Usecase{
 		store: store,
 	}
+
+	usecase = uc
+
+	return uc
 }
 
-func (u *useCase) SupplierCreate(ctx context.Context, input *InputSupplierCreate) (*OutputSupplierCreate, error) {
+func (u *Usecase) SupplierCreate(ctx context.Context, input *InputSupplierCreate) (*OutputSupplierCreate, error) {
 	createdSupplier, err := u.store.SupplierCreate(ctx, toSupplier(input))
 	if err != nil {
 		return nil, err
