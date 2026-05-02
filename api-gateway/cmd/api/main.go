@@ -26,7 +26,7 @@ func main() {
 		return
 	}
 
-	postgres, err := postgres.New(context.Background(), postgres.NewConfig(cfg.PGUser, cfg.PGPassword, cfg.PGDBName, cfg.PGHost, cfg.PGPort))
+	postgres, err := postgres.New(context.Background(), cfg.Postgres)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}

@@ -10,21 +10,11 @@ import (
 )
 
 type Config struct {
-	User     string `mapstructure:"user"    `
-	Password string `mapstructure:"password"`
-	DBName   string `mapstructure:"db" `
-	Host     string `mapstructure:"host"    `
-	Port     string `mapstructure:"port"    `
-}
-
-func NewConfig(user, password, dbname, host, port string) Config {
-	return Config{
-		User:     user,
-		Password: password,
-		DBName:   dbname,
-		Host:     host,
-		Port:     port,
-	}
+	User     string `env:"USER" envDefault:"admin"`
+	Password string `env:"PASSWORD" envDefault:"admin"`
+	DBName   string `env:"DB" envDefault:"shopapi"`
+	Host     string `env:"HOST" envDefault:"localhost"`
+	Port     string `env:"PORT" envDefault:"5432"`
 }
 
 type Postgres struct {

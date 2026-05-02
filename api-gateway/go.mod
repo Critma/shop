@@ -8,10 +8,10 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.9.1
 	github.com/rs/zerolog v1.35.0
-	github.com/spf13/viper v1.21.0
 )
 
 require (
+	github.com/caarlos0/env/v11 v11.4.1 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
