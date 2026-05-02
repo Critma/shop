@@ -6,22 +6,25 @@ services:
     container_name: service_auth
     environment:
       POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
+      POSTGRES_PORT: ${POSTGRES_PORT-5432}
       AUTH_HOST: api
-      AUTH_PORT: 9090
+      AUTH_PORT: ${AUTH_PORT-9090}
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - path: ../config/.env
+        required: false
     ports:
-      - "9090:9090"
+      - "${AUTH_PORT-9090}:${AUTH_PORT-9090}"
 
   postgres:
     image: postgres:18.3-alpine3.23
     container_name: pg_auth
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: auth
+      POSTGRES_USER: ${POSTGRES_USER-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-admin}
+      POSTGRES_DB: ${POSTGRES_DB-auth}
     volumes:
       - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
       - pg_auth_data:/var/lib/postgresql
@@ -30,6 +33,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    env_file:
+      - path: ../config/.env
+        required: false
     ports:
       - "5440:5432"
 
