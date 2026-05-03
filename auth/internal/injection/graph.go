@@ -1,11 +1,10 @@
 package injection
 
 import (
-	"github.com/critma/auth/internal/config"
 	grpc_controller "github.com/critma/auth/internal/controller/grpc"
 	"github.com/critma/auth/internal/core/usecase"
 	"github.com/critma/auth/internal/domain"
-	"github.com/critma/auth/internal/injection/adapter"
+	di_adapter "github.com/critma/auth/internal/injection/adapter"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -23,9 +22,9 @@ func BuildGraph() *fx.App {
 	return fx.New(
 		fx.Provide(
 			zap.NewProduction,
-			config.InitConfig,
-			adapter.ProvidePostgres,
-			adapter.ProvidegRPCServer,
+			di_adapter.ProvideConfig,
+			di_adapter.ProvidePostgres,
+			di_adapter.ProvidegRPCServer,
 		),
 		ModuleUsecases,
 		ModulegRPCServices,

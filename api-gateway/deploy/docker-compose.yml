@@ -28,7 +28,6 @@ services:
     environment:
       POSTGRES_HOST: postgres
       SERVICE_HOST: api
-      SERVICE_PORT: ${SERVICE_PORT-8080}
       AUTH_HOST: ${AUTH_HOST-host.docker.internal}
     env_file:
       - path: ../config/.env

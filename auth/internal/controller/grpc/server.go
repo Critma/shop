@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/critma/auth/internal/config"
+	"github.com/critma/auth/config"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.uber.org/zap"

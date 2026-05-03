@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/critma/auth/config"
 	"github.com/critma/auth/internal/adapter/postgres"
-	"github.com/critma/auth/internal/config"
 	"github.com/critma/auth/internal/domain"
 	"go.uber.org/fx"
 	"go.uber.org/zap"

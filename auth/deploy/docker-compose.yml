@@ -8,7 +8,6 @@ services:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: ${POSTGRES_PORT-5432}
       AUTH_HOST: api
-      AUTH_PORT: ${AUTH_PORT-9090}
     depends_on:
       postgres:
         condition: service_healthy
@@ -17,6 +16,8 @@ services:
         required: false
     ports:
       - "${AUTH_PORT-9090}:${AUTH_PORT-9090}"
+    secrets:
+      - jwt_secret
 
   postgres:
     image: postgres:18.3-alpine3.23
@@ -41,3 +42,7 @@ services:
 
 volumes:
   pg_auth_data:
+
+secrets:
+  jwt_secret:
+    file: ${JWT_SECRET_PATH-../config/jwt.secret.txt}

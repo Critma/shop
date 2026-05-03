@@ -3,7 +3,7 @@ package adapter
 import (
 	"context"
 
-	"github.com/critma/auth/internal/config"
+	"github.com/critma/auth/config"
 	grpc_controller "github.com/critma/auth/internal/controller/grpc"
 	"go.uber.org/fx"
 	"go.uber.org/zap"

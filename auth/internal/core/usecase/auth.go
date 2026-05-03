@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/critma/auth/internal/config"
+	"github.com/critma/auth/config"
 	"github.com/critma/auth/internal/domain"
 	"github.com/critma/auth/pkg/jwt"
 	"go.uber.org/zap"
