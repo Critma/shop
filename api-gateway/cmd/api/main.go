@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"shopapi/config"
 	"shopapi/internal/adapter/grpc_client"
+	"shopapi/internal/adapter/kafka_consume"
 	"shopapi/internal/adapter/postgres"
+	"shopapi/internal/adapter/websocket"
 	"shopapi/internal/api"
 	"shopapi/internal/core"
 	"shopapi/pkg/zlog"
@@ -37,10 +39,16 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to connect to grpc server")
 	}
 
+	wsProductUpdate := websocket.NewWebsocket("productUpdate", cfg.ApiHost)
+	kafkaConsumer := kafka_consume.NewConsumer(cfg.KafkaConsume, wsProductUpdate)
+	defer kafkaConsumer.Close()
+	kafkaConsumer.StartPoiling(context.Background())
+
 	app := config.App{
-		Config:     cfg,
-		Store:      postgres,
-		GrpcClient: grpcClient,
+		Config:        cfg,
+		Store:         postgres,
+		GrpcClient:    grpcClient,
+		KafkaConsumer: kafkaConsumer,
 	}
 
 	// usecases

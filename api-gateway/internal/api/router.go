@@ -20,6 +20,7 @@ import (
 	"shopapi/internal/core/product/product_create"
 	"shopapi/internal/core/product/product_delete"
 	"shopapi/internal/core/product/product_get"
+	"shopapi/internal/core/product/product_update_subscribe"
 	"shopapi/internal/core/product/products_get_list"
 	"shopapi/internal/core/supplier/supplier_create"
 	"shopapi/internal/core/supplier/supplier_delete"
@@ -64,12 +65,14 @@ func GetRouter(app config.App) http.Handler {
 		client_update_address.RegisterHTTPv1Handler(grpClients, "/{id}/address", http.MethodPut)
 
 		grpProducts := huma.NewGroup(grpAuthNeed, "/products")
+		grpProductNoAuth := huma.NewGroup(grp_v1, "/products")
 		product_create.RegisterHTTPv1Handler(grpProducts, "/", http.MethodPost)
 		product_get.RegisterHTTPv1Handler(grpProducts, "/{id}", http.MethodGet)
 		products_get_list.RegisterHTTPv1Handler(grpProducts, "/", http.MethodGet)
 		product_delete.RegisterHTTPv1Handler(grpProducts, "/{id}", http.MethodDelete)
 		image_assign.RegisterHTTPv1Handler(grpProducts, "/{id}/image", http.MethodPut)
 		image_get_by_product.RegisterHTTPv1Handler(grpProducts, "/{id}/image", http.MethodGet)
+		product_update_subscribe.RegisterSSEHandler(grpProductNoAuth, "/sse")
 
 		grpSuppliers := huma.NewGroup(grpAuthNeed, "/suppliers")
 		supplier_create.RegisterHTTPv1Handler(grpSuppliers, "/", http.MethodPost)

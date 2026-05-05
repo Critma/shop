@@ -8,10 +8,10 @@ PROTO_PATH=$(PROTO_ROOT)/auth/v1/auth.proto
 PROTO_GEN_GO_OUT=gen
 
 compose:
-	docker-compose -p "shop-api" -f $(COMPOSE_PATH) up -d
+	docker-compose -p "shop-api" -f $(COMPOSE_PATH) up -d --build
 
 compose-api:
-	docker-compose -p "shop-api" -f $(COMPOSE_PATH) up -d api
+	docker-compose -p "shop-api" -f $(COMPOSE_PATH) up -d api --build
 
 compose-postgres:
 	docker-compose -p "shop-api" -f $(COMPOSE_PATH) up -d postgres

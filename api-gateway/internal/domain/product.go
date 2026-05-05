@@ -18,3 +18,11 @@ type Product struct {
 	ImageID        *uuid.UUID `json:"imageID,omitempty"`
 	Image          *Image     `json:"image,omitempty"`
 }
+
+type ProductChangeEvent struct {
+	ProductID string  `json:"productID"`
+	OldPrice  float64 `json:"oldPrice"`
+	NewPrice  float64 `json:"newPrice"`
+	OldAmount int     `json:"oldAmount"`
+	NewAmount int     `json:"newAmount"`
+}

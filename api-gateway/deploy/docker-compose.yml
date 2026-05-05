@@ -29,6 +29,7 @@ services:
       POSTGRES_HOST: postgres
       SERVICE_HOST: api
       AUTH_HOST: ${AUTH_HOST-host.docker.internal}
+      KAFKA_READER_ADDR: ${KAFKA_READER_ADDR-host.docker.internal:9093}
     env_file:
       - path: ../config/.env
         required: false
@@ -45,6 +46,7 @@ services:
       SERVICE_HOST: api2
       SERVICE_PORT: 8081
       AUTH_HOST: ${AUTH_HOST-host.docker.internal}
+      KAFKA_READER_ADDR: ${KAFKA_READER_ADDR-host.docker.internal:9093}
     env_file:
       - path: ../config/.env
         required: false
@@ -61,6 +63,7 @@ services:
       SERVICE_HOST: api3
       SERVICE_PORT: 8082
       AUTH_HOST: ${AUTH_HOST-host.docker.internal}
+      KAFKA_READER_ADDR: ${KAFKA_READER_ADDR-host.docker.internal:9093}
     env_file:
       - path: ../config/.env
         required: false
