@@ -20,12 +20,12 @@ compose-clear:
 	docker compose -f $(COMPOSE_PATH) down -v
 
 #  grpc
-generate-grpc:
+gen-grpc:
 	mkdir -p $(PROTO_GEN_GO_OUT)
 	protoc -I $(PROTO_ROOT) $(PROTO_PATH) --go_out=$(PROTO_GEN_GO_OUT) --go_opt=paths=source_relative --go-grpc_out=$(PROTO_GEN_GO_OUT) --go-grpc_opt=paths=source_relative
 
 # certificate
-generate-cert:
+gen-cert:
 	cd deploy/nginx/ssl && openssl req -x509 -nodes -days 730 -newkey rsa:2048 -config openssl.cnf -sha256 -out shopapi.local.crt
 
 # run local
