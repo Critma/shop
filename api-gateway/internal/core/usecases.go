@@ -19,7 +19,6 @@ import (
 	"shopapi/internal/core/product/product_create"
 	"shopapi/internal/core/product/product_delete"
 	"shopapi/internal/core/product/product_get"
-	"shopapi/internal/core/product/product_update_subscribe"
 	"shopapi/internal/core/product/products_get_list"
 	"shopapi/internal/core/supplier/supplier_create"
 	"shopapi/internal/core/supplier/supplier_delete"
@@ -41,7 +40,6 @@ func CreateUsecases(app config.App) {
 	product_get.NewUsecase(app.Store)
 	products_get_list.NewUsecase(app.Store)
 	product_delete.NewUsecase(app.Store)
-	product_update_subscribe.NewUsecase(app.KafkaConsumer)
 
 	image_assign.NewUsecase(app.Store)
 	image_update.NewUsecase(app.Store)

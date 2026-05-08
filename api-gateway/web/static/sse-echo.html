@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>SSE Client</title>
+    <a href="/">Назад</a>
 </head>
 
 <body>
@@ -21,6 +22,16 @@
             const data = JSON.parse(event.data);
             console.log('📩 Получено по SSE:', data);
         };
+
+        eventSource.addEventListener('product_updated', function (event) {
+            const data = JSON.parse(event.data);
+            console.log('🔄 Произошло обновление продукта:', data);
+        });
+
+        eventSource.addEventListener('product_update', function (event) {
+            const data = JSON.parse(event.data);
+            console.log('🔄 Произошло обновление продукта:', data);
+        });
 
         eventSource.onerror = function (err) {
             console.error('⚠️ Ошибка SSE:', err);

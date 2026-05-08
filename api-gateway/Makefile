@@ -10,6 +10,9 @@ PROTO_GEN_GO_OUT=gen
 compose:
 	docker-compose -p "shop-api" -f $(COMPOSE_PATH) up -d --build
 
+recompose:
+	docker-compose -p "shop-api" -f $(COMPOSE_PATH) up -d
+
 compose-api:
 	docker-compose -p "shop-api" -f $(COMPOSE_PATH) up -d api --build
 

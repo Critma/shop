@@ -11,6 +11,7 @@ import (
 	"shopapi/internal/adapter/websocket"
 	"shopapi/internal/api"
 	"shopapi/internal/core"
+	"shopapi/internal/core/product/product_update_subscribe"
 	"shopapi/pkg/zlog"
 	"time"
 
@@ -42,7 +43,7 @@ func main() {
 	wsProductUpdate := websocket.NewWebsocket("productUpdate", cfg.ApiHost)
 	kafkaConsumer := kafka_consume.NewConsumer(cfg.KafkaConsume, wsProductUpdate)
 	defer kafkaConsumer.Close()
-	kafkaConsumer.StartPoiling(context.Background())
+	go kafkaConsumer.StartPoiling(context.Background())
 
 	app := config.App{
 		Config:        cfg,
@@ -52,6 +53,7 @@ func main() {
 	}
 
 	// usecases
+	product_update_subscribe.NewUsecase(app.KafkaConsumer, wsProductUpdate)
 	core.CreateUsecases(app)
 
 	// server

@@ -29,13 +29,12 @@ import (
 	"shopapi/internal/core/supplier/suppliers_get_list"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/danielgtaylor/huma/v2/adapters/humachi"
-	"github.com/go-chi/chi/v5"
+	"github.com/danielgtaylor/huma/v2/adapters/humagin"
+	"github.com/gin-gonic/gin"
 )
 
-// TODO: refactor: move usecases out
 func GetRouter(app config.App) http.Handler {
-	mux := chi.NewMux()
+	mux := gin.New()
 	config := huma.DefaultConfig("SHOP API", "1.0.0")
 	config.Components.SecuritySchemes = map[string]*huma.SecurityScheme{
 		"bearer": {
@@ -47,7 +46,7 @@ func GetRouter(app config.App) http.Handler {
 	config.DocsPath = "/swagger"
 	config.Info = getAdditionalInfo(config.Info)
 
-	api := humachi.New(mux, config)
+	api := humagin.New(mux, config)
 
 	authMiddleware := auth_header_middleware.AuthMiddleware(api)
 
@@ -65,14 +64,14 @@ func GetRouter(app config.App) http.Handler {
 		client_update_address.RegisterHTTPv1Handler(grpClients, "/{id}/address", http.MethodPut)
 
 		grpProducts := huma.NewGroup(grpAuthNeed, "/products")
-		grpProductNoAuth := huma.NewGroup(grp_v1, "/products")
 		product_create.RegisterHTTPv1Handler(grpProducts, "/", http.MethodPost)
 		product_get.RegisterHTTPv1Handler(grpProducts, "/{id}", http.MethodGet)
 		products_get_list.RegisterHTTPv1Handler(grpProducts, "/", http.MethodGet)
 		product_delete.RegisterHTTPv1Handler(grpProducts, "/{id}", http.MethodDelete)
 		image_assign.RegisterHTTPv1Handler(grpProducts, "/{id}/image", http.MethodPut)
 		image_get_by_product.RegisterHTTPv1Handler(grpProducts, "/{id}/image", http.MethodGet)
-		product_update_subscribe.RegisterSSEHandler(grpProductNoAuth, "/sse")
+		mux.GET("/api/v1/products/sse", product_update_subscribe.HandleSSE)
+		mux.GET("/api/v1/products/ws", product_update_subscribe.HandleWS)
 
 		grpSuppliers := huma.NewGroup(grpAuthNeed, "/suppliers")
 		supplier_create.RegisterHTTPv1Handler(grpSuppliers, "/", http.MethodPost)

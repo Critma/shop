@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"shopapi/internal/adapter/websocket"
 	"shopapi/internal/domain"
 	"sync"
@@ -14,12 +15,10 @@ import (
 )
 
 type Config struct {
-	Addr    []string `env:"READER_ADDR" envDefault:"localhost:9093"`
+	Addr    []string `env:"READER_ADDR" envDefault:"localhost:9094"`
 	Topic   string   `env:"READER_TOPIC" envDefault:"product-updated"`
-	GroupID string   `env:"READER_GROUP_ID" envDefault:"api-gateway"`
+	GroupID string   `env:"READER_GROUP_ID" envDefault:"api-gateway-local"`
 }
-
-//TODO: parallel
 
 type Consumer struct {
 	reader *kafka.Reader
@@ -73,8 +72,8 @@ func (c *Consumer) StartPoiling(ctx context.Context) {
 			cancel()
 
 			if err != nil {
-				if ctx.Err() != nil {
-					log.Info().Msg("context cancelled, stopping consumer")
+				if ctx.Err() != nil || errors.Is(err, io.EOF) {
+					log.Info().Msg("context canceled or get EOF, stopping consumer")
 					return
 				}
 

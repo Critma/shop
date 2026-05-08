@@ -43,4 +43,5 @@ func New(ctx context.Context, cfg Config) (*Postgres, error) {
 
 func (p *Postgres) Close() {
 	p.pool.Close()
+	log.Info().Msg("Connection to Postgres closed")
 }

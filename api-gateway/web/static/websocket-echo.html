@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <title>WebSocket Client</title>
+    <a href="/">Назад</a>
 </head>
 
 <body>
     <h1>WebSocket Эхо-клиент</h1>
     <h3>Откройте консоль в инструмантах разработчика: f12</h3>
     <script>
-        const socket = new WebSocket('ws://shopapi.local/ws');
+        const socket = new WebSocket('wss://shopapi.local/api/v1/products/ws');
 
         socket.onopen = function (event) {
             console.log('✅ Соединение по WebSocket установлено');

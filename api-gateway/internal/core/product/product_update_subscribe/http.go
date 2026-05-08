@@ -1,47 +1,91 @@
 package product_update_subscribe
 
 import (
-	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"shopapi/internal/domain"
+	"time"
 
-	"github.com/danielgtaylor/huma/v2"
-	"github.com/danielgtaylor/huma/v2/sse"
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+	"github.com/rs/zerolog/log"
 )
 
-// func RegisterHTTPv1Handler(api huma.API, path, method string) {
-// 	huma.Register(api, huma.Operation{
-// 		OperationID:   "ws-product-update-broadcast_v1",
-// 		Method:        method,
-// 		Path:          path,
-// 		Summary:       "Get all products",
-// 		Description:   "Get all products with optional pagination (limit and offset)",
-// 		Tags:          []string{"Products"},
-// 		DefaultStatus: http.StatusOK,
-// 		Security: []map[string][]string{
-// 			{"bearer": {}},
-// 		},
-// 	}, func(ctx context.Context, i *InputGetAllProducts) (*OutputGetAllProducts, error) {
-// 		output, err := usecase.GetAllProducts(ctx, i)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		return output, nil
-// 	})
-// }
+func HandleSSE(c *gin.Context) {
+	c.Writer.Header().Set("Content-Type", "text/event-stream")
+	c.Writer.Header().Set("Cache-Control", "no-cache")
+	c.Writer.Header().Set("Connection", "keep-alive")
+	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	c.Writer.Header().Set("X-Accel-Buffering", "no")
+	c.Writer.WriteHeader(http.StatusOK)
 
-func RegisterSSEHandler(api huma.API, path string) {
-	sse.Register(api, huma.Operation{
-		OperationID: "sse-product-update-broadcast",
-		Method:      http.MethodGet,
-		Path:        path,
-		Summary:     "Subscribe to product updates",
-		Tags:        []string{"Products"},
-	}, map[string]any{
-		"message": SEEMessage{},
-	}, func(ctx context.Context, input *struct{}, send sse.Sender) {
-		productUpdateChan := usecase.ListenSSEBroadcast(context.Background())
-		for productUpdate := range productUpdateChan {
-			send.Data(productUpdate)
+	fmt.Fprint(c.Writer, ": connected\n\n")
+	c.Writer.Flush()
+
+	ch := make(chan domain.ProductChangeEvent, 10)
+
+	usecase.RegisterSSE(ch)
+	log.Info().Str("ip", c.ClientIP()).Msg("SSE client connected")
+
+	defer func() {
+		usecase.UnregisterSSE(ch)
+		log.Info().Str("ip", c.ClientIP()).Msg("SSE client disconnected")
+	}()
+
+	ping := time.NewTicker(10 * time.Second)
+	defer ping.Stop()
+
+	c.Stream(func(w io.Writer) bool {
+		select {
+		case event, ok := <-ch:
+			if !ok {
+				return false
+			}
+			data, err := json.Marshal(event)
+			if err != nil {
+				log.Error().Err(err).Msg("Error marshaling product update event")
+			}
+			fmt.Fprintf(c.Writer, "event: product_updated\n")
+			fmt.Fprintf(c.Writer, "data: %s\n\n", data)
+			c.Writer.Flush()
+			return true
+		case <-ping.C:
+			fmt.Fprintf(c.Writer, "event: ping\ndata: %d\n\n", time.Now().Unix())
+			c.Writer.Flush()
+			return true
+		case <-c.Request.Context().Done():
+			return false
 		}
 	})
+}
+
+func HandleWS(c *gin.Context) {
+	upgrader := usecase.GetUpgrader()
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Error().Err(err).Msg("upgrade failed")
+		return
+	}
+
+	usecase.RegisterWS(conn)
+	log.Info().Any("ip", c.ClientIP()).Msg("WebSocket connected")
+
+	defer func() {
+		usecase.UnregisterWS(conn)
+		conn.Close()
+		log.Info().Any("ip", c.ClientIP()).Msg("WebSocket disconnected")
+	}()
+
+	for {
+		_, _, err := conn.ReadMessage()
+		if err != nil {
+			if !errors.Is(err, &websocket.CloseError{Code: websocket.CloseGoingAway}) {
+				log.Debug().Err(err).Msg("WebSocket read error")
+			}
+			break
+		}
+	}
 }
