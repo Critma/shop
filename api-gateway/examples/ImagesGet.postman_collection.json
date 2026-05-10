@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "e2bb79de-f8ff-4d88-b3f2-32929d9c4dcd",
-    "name": "BE2_APIFromSpec",
+    "name": "Images to api",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "42944399"
   },
@@ -138,7 +138,7 @@
   "variable": [
     {
       "key": "url",
-      "value": "http://localhost:8080/api/v1"
+      "value": "http://localhost/api/v1"
     }
   ]
 }

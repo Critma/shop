@@ -3,6 +3,7 @@ package config
 import (
 	"shopapi/internal/adapter/kafka_consume"
 	"shopapi/internal/adapter/postgres"
+	"shopapi/internal/adapter/redis"
 
 	"github.com/caarlos0/env/v11"
 	"github.com/rs/zerolog/log"
@@ -14,6 +15,8 @@ type Config struct {
 	Postgres postgres.Config `envPrefix:"POSTGRES_"`
 
 	KafkaConsume kafka_consume.Config `envPrefix:"KAFKA_"`
+
+	Redis redis.Config `envPrefix:"REDIS_"`
 
 	AuthHost string `env:"AUTH_HOST" envDefault:"localhost"`
 	AuthPort string `env:"AUTH_PORT" envDefault:"9090"`

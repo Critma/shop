@@ -7,51 +7,7 @@ services:
     environment:
       SERVICE_HOST: service
       POSTGRES_HOST: ${POSTGRES_HOST-host.docker.internal}
-      KAFKA_WRITER_ADDR: ${KAFKA_WRITER_ADDR-kafka:9092}
+      KAFKA_WRITER_ADDR: ${KAFKA_WRITER_ADDR-host.docker.internal:9093}
     env_file:
       - path: ../config/.env
         required: false
-    depends_on:
-      kafka:
-        condition: service_started
-
-  kafka:
-    image: redpandadata/redpanda:latest
-    container_name: kafka_mgen
-    ports:
-      - "9092:9092"
-      - "9093:9093"
-      - "9094:9094"
-    command:
-      - redpanda
-      - start
-      - --overprovisioned
-      - --smp
-      - "1"
-      - --memory
-      - "1G"
-      - --reserve-memory
-      - "0M"
-      - --node-id
-      - "0"
-      - --check=false
-      - --kafka-addr
-      - PLAINTEXT://0.0.0.0:9092,Docker://0.0.0.0:9093,OUTSIDE://0.0.0.0:9094
-      - --advertise-kafka-addr
-      - PLAINTEXT://kafka:9092,Docker://host.docker.internal:9093,OUTSIDE://localhost:9094
-    volumes:
-      - kafka_mgen:/var/lib/redpanda/data
-
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui_mgen
-    ports:
-      - "9095:8080"
-    environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-    depends_on:
-      - kafka
-
-volumes:
-  kafka_mgen:

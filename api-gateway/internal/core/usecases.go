@@ -41,10 +41,10 @@ func CreateUsecases(app config.App) {
 	products_get_list.NewUsecase(app.Store)
 	product_delete.NewUsecase(app.Store)
 
-	image_assign.NewUsecase(app.Store)
-	image_update.NewUsecase(app.Store)
-	image_delete.NewUsecase(app.Store)
-	image_get.NewUsecase(app.Store)
+	image_assign.NewUsecase(app.Store, app.Cache)
+	image_update.NewUsecase(app.Store, app.Cache)
+	image_delete.NewUsecase(app.Store, app.Cache)
+	image_get.NewUsecase(app.Store, app.Cache)
 	image_get_by_product.NewUsecase(app.Store)
 
 	supplier_create.NewUsecase(app.Store)

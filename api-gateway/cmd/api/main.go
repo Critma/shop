@@ -8,6 +8,7 @@ import (
 	"shopapi/internal/adapter/grpc_client"
 	"shopapi/internal/adapter/kafka_consume"
 	"shopapi/internal/adapter/postgres"
+	"shopapi/internal/adapter/redis"
 	"shopapi/internal/adapter/websocket"
 	"shopapi/internal/api"
 	"shopapi/internal/core"
@@ -31,25 +32,37 @@ func main() {
 
 	postgres, err := postgres.New(context.Background(), cfg.Postgres)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to connect to database")
+		log.Error().Err(err).Msg("Failed to connect to database")
+		return
 	}
 	defer postgres.Close()
 
 	grpcClient, err := grpc_client.New(cfg.AuthHost+":"+cfg.AuthPort, zlog.InterceptorLogger())
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to connect to grpc server")
+		log.Error().Err(err).Msg("Failed to connect to grpc server")
+		return
 	}
 
 	wsProductUpdate := websocket.NewWebsocket("productUpdate", cfg.ApiHost)
-	kafkaConsumer := kafka_consume.NewConsumer(cfg.KafkaConsume, wsProductUpdate)
+	kafkaConsumer, err := kafka_consume.NewConsumer(cfg.KafkaConsume, wsProductUpdate)
+	if err != nil {
+		return
+	}
 	defer kafkaConsumer.Close()
 	go kafkaConsumer.StartPoiling(context.Background())
+
+	redis, err := redis.New(cfg.Redis)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to connect to redis")
+		return
+	}
 
 	app := config.App{
 		Config:        cfg,
 		Store:         postgres,
 		GrpcClient:    grpcClient,
 		KafkaConsumer: kafkaConsumer,
+		Cache:         redis,
 	}
 
 	// usecases

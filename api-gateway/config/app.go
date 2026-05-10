@@ -4,11 +4,13 @@ import (
 	"shopapi/internal/adapter/grpc_client"
 	"shopapi/internal/adapter/kafka_consume"
 	"shopapi/internal/adapter/postgres"
+	"shopapi/internal/adapter/redis"
 )
 
 type App struct {
 	Config        Config
 	Store         *postgres.Postgres
+	Cache         *redis.Redis
 	GrpcClient    *grpc_client.Client
 	KafkaConsumer *kafka_consume.Consumer
 }

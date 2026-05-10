@@ -27,7 +27,7 @@ type Consumer struct {
 	ws     *websocket.Websocket
 }
 
-func NewConsumer(config Config, ws *websocket.Websocket) *Consumer {
+func NewConsumer(config Config, ws *websocket.Websocket) (*Consumer, error) {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:        config.Addr,
 		Topic:          config.Topic,
@@ -39,12 +39,36 @@ func NewConsumer(config Config, ws *websocket.Websocket) *Consumer {
 		ReadBackoffMax: 1 * time.Second,
 	})
 
+	if !isKafkaAvailable(config.Addr, 10*time.Second) {
+		log.Error().Msg("Kafka is not available")
+		return nil, errors.New("kafka is not available")
+	}
+
 	return &Consumer{
 		reader: reader,
 		kChan:  make(chan kafka.Message),
 		sse:    newSee(),
 		ws:     ws,
+	}, nil
+}
+
+func isKafkaAvailable(brokers []string, timeout time.Duration) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	d := &kafka.Dialer{
+		Timeout:   10 * time.Second,
+		DualStack: true,
 	}
+
+	conn, err := d.DialContext(ctx, "tcp", brokers[0])
+	if err != nil {
+		return false
+	}
+	defer conn.Close()
+
+	_, err = conn.ReadPartitions("any-topic-name")
+	return err == nil
 }
 
 type sse struct {
