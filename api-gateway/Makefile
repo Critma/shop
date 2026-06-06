@@ -22,6 +22,9 @@ compose-postgres:
 compose-clear:
 	docker compose -f $(COMPOSE_PATH) down -v
 
+compose-stop:
+	docker-compose -p "shop-api" -f $(COMPOSE_PATH) stop
+
 #  grpc
 gen-grpc:
 	mkdir -p $(PROTO_GEN_GO_OUT)

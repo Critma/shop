@@ -21,5 +21,10 @@ compose:
 compose-postgres:
 	docker compose -p "auth" -f $(COMPOSE_PATH) up -d postgres
 
+compose-stop:
+	docker compose -p "auth" -f $(COMPOSE_PATH) stop
+
 run:
 	go run $(APP_PATH)
+
+.PHONY: run compose

@@ -9,6 +9,9 @@ compose:
 compose-clear:
 	docker compose -f $(COMPOSE_PATH) down -v
 
+compose-stop:
+	docker-compose -p "message-generator" -f $(COMPOSE_PATH) stop
+
 # run local
 run:
 	mkdir -p $(BUILD_PATH)
