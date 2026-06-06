@@ -1,0 +1,168 @@
+services:
+  nginx:
+    image: nginx:1.29.7-alpine
+    container_name: nginx
+    environment:
+      SERVICE_HOST: ${SERVICE_HOST-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ../web/static:/usr/share/nginx/html:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    env_file:
+      - path: ../config/.env
+        required: false
+    depends_on:
+      - api
+      - api2
+      - api3
+
+  api:
+    build:
+      context: ..
+      dockerfile: build/package/Dockerfile
+    container_name: shopapi
+    environment:
+      POSTGRES_HOST: postgres
+      SERVICE_HOST: api
+      AUTH_HOST: ${AUTH_HOST-host.docker.internal}
+      KAFKA_READER_ADDR: ${KAFKA_READER_ADDR-kafka:9092}
+      REDIS_ADDR: ${REDIS_ADDR-redis:6379}
+    env_file:
+      - path: ../config/.env
+        required: false
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api2:
+    build:
+      context: ..
+      dockerfile: build/package/Dockerfile
+    environment:
+      POSTGRES_HOST: postgres
+      SERVICE_HOST: api2
+      SERVICE_PORT: 8081
+      AUTH_HOST: ${AUTH_HOST-host.docker.internal}
+      KAFKA_READER_ADDR: ${KAFKA_READER_ADDR-kafka:9092}
+      KAFKA_READER_GROUP_ID: "api-gateway-2"
+      REDIS_ADDR: ${REDIS_ADDR-redis:6379}
+    env_file:
+      - path: ../config/.env
+        required: false
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api3:
+    build:
+      context: ..
+      dockerfile: build/package/Dockerfile
+    environment:
+      POSTGRES_HOST: postgres
+      SERVICE_HOST: api3
+      SERVICE_PORT: 8082
+      AUTH_HOST: ${AUTH_HOST-host.docker.internal}
+      KAFKA_READER_ADDR: ${KAFKA_READER_ADDR-kafka:9092}
+      KAFKA_READER_GROUP_ID: "api-gateway-3"
+      REDIS_ADDR: ${REDIS_ADDR-redis:6379}
+    env_file:
+      - path: ../config/.env
+        required: false
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18.3-alpine3.23
+    container_name: pg_shopapi
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-admin}
+      POSTGRES_DB: ${POSTGRES_DB-shopapi}
+      PGUSER: ${POSTGRES_USER-admin}
+      PGDATABASE: ${POSTGRES_DB-shopapi}
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+      - pg_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - path: ../config/.env
+        required: false
+    ports:
+      - "${POSTGRES_PORT-5432}:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4:9.14.0
+    container_name: pgadmin_shopapi
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL-user@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD-securepassword}
+    volumes:
+      - "pgadmin_data:/var/lib/pgadmin"
+    env_file:
+      - path: ../config/.env
+        required: false
+    depends_on:
+      - postgres
+  
+  redis:
+    image: redis:8.6.3-alpine
+    container_name: redis_shopapi
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+  
+  kafka:
+    image: redpandadata/redpanda:latest
+    container_name: kafka_mgen
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+      - "9094:9094"
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp
+      - "1"
+      - --memory
+      - "1G"
+      - --reserve-memory
+      - "0M"
+      - --node-id
+      - "0"
+      - --check=false
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:9092,Docker://0.0.0.0:9093,OUTSIDE://0.0.0.0:9094
+      - --advertise-kafka-addr
+      - PLAINTEXT://kafka:9092,Docker://host.docker.internal:9093,OUTSIDE://localhost:9094
+    volumes:
+      - kafka_mgen:/var/lib/redpanda/data
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui_mgen
+    ports:
+      - "9095:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+volumes:
+  pg_data:
+  pgadmin_data:
+  redis_data:
+  kafka_mgen:

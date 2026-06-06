@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SSE Client</title>
+    <a href="/">Назад</a>
+</head>
+
+<body>
+    <h1>SSE Эхо-клиент</h1>
+    <h3>Откройте консоль в инструмантах разработчика: f12</h3>
+    <script>
+        const eventSource = new EventSource('https://shopapi.local/api/products/sse');
+
+        eventSource.onopen = function () {
+            console.log('✅ Соединение по SSE установлено');
+        };
+
+        eventSource.onmessage = function (event) {
+            // При получении сообщения от сервера
+            const data = JSON.parse(event.data);
+            console.log('📩 Получено по SSE:', data);
+        };
+
+        eventSource.addEventListener('product_updated', function (event) {
+            const data = JSON.parse(event.data);
+            console.log('🔄 Произошло обновление продукта:', data);
+        });
+
+        eventSource.addEventListener('product_update', function (event) {
+            const data = JSON.parse(event.data);
+            console.log('🔄 Произошло обновление продукта:', data);
+        });
+
+        eventSource.onerror = function (err) {
+            console.error('⚠️ Ошибка SSE:', err);
+            eventSource.close();
+        };
+    </script>
+</body>
+
+</html>

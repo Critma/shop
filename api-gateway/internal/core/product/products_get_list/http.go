@@ -1,0 +1,30 @@
+package products_get_list
+
+import (
+	"context"
+	"net/http"
+
+	"github.com/danielgtaylor/huma/v2"
+)
+
+func RegisterHTTPv1Handler(api huma.API, path, method string) {
+
+	huma.Register(api, huma.Operation{
+		OperationID:   "get-list-products_v1",
+		Method:        method,
+		Path:          path,
+		Summary:       "Get all products",
+		Description:   "Get all products with optional pagination (limit and offset)",
+		Tags:          []string{"Products"},
+		DefaultStatus: http.StatusOK,
+		Security: []map[string][]string{
+			{"bearer": {}},
+		},
+	}, func(ctx context.Context, i *InputGetAllProducts) (*OutputGetAllProducts, error) {
+		output, err := usecase.GetAllProducts(ctx, i)
+		if err != nil {
+			return nil, err
+		}
+		return output, nil
+	})
+}

@@ -1,0 +1,9 @@
+# exe
+shopapi
+
+# certificate
+*.crt
+*.key
+
+!go.mod
+!go.sum

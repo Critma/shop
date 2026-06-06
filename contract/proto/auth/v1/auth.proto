@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option go_package = "auth/v1;authv1";
+
+package auth;
+
+service Authorization {
+  rpc CreateUser(UserRequest) returns (TokenReply) {}
+  rpc LoginUser(LoginRequest) returns (TokenReply) {}
+  rpc ChangePassword(ChangePasswordRequest) returns (MessageReply) {}
+  rpc RecoverPassword(RecoverPasswordRequest) returns (MessageReply) {}
+  rpc ValidateToken(TokenRequest) returns (MessageReply) {}
+}
+
+// почта, имя, фамилия, номер телефона, пароль
+message UserRequest {
+  string email = 1;
+  string name = 2;
+  string surname = 3;
+  string phone = 4;
+  string password = 5;
+}
+
+message TokenReply { string token = 1; }
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message ChangePasswordRequest {
+  LoginRequest login_credentials = 1;
+  string new_password = 2;
+}
+
+message MessageReply { string message = 1; }
+
+message RecoverPasswordRequest { string email = 1; }
+
+message TokenRequest { string token = 1; }

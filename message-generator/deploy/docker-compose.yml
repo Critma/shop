@@ -1,0 +1,13 @@
+services:
+  service:
+    build:
+      context: ..
+      dockerfile: build/package/Dockerfile
+    container_name: service_mgen
+    environment:
+      SERVICE_HOST: service
+      POSTGRES_HOST: ${POSTGRES_HOST-host.docker.internal}
+      KAFKA_WRITER_ADDR: ${KAFKA_WRITER_ADDR-host.docker.internal:9093}
+    env_file:
+      - path: ../config/.env
+        required: false
